@@ -1,17 +1,22 @@
 CREATE DATABASE IF NOT EXISTS `groupomania` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `groupomania`;
 
-CREATE TABLE IF NOT EXISTS `accounts` (
-  `id` int(11) NOT NULL,
-  `username` varchar(50) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `email` varchar(100) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,/* INT (nombre entier) UNSIGNED (on commence à partir de ) NOT NULL (Toujours renseigné) AUTO_INCREMENT (incrémentation automatique)*/
+  `lastName` VARCHAR(255) NOT NULL,/* VARCHAR (Nombre de caractères)*/
+  `firstName` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(50) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `moderation` INT UNSIGNED DEFAULT NULL,/* NOUS METTONS EN PLACE UNE COLONNE POUR LA VALIDATION PAR LE MODERATEUR*/
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`) /*La contrainte UNIQUE garantit que toutes les valeurs d'une colonne sont différentes pour éviter l'incription de 2 utilisateurs*/
+) 
+ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8; 
 
-INSERT INTO `accounts` (`id`, `username`, `password`, `email`) VALUES (1, 'test', 'test', 'test@test.com');
+INSERT INTO `users` (`id`, `username`, `password`, `email`) VALUES (1, 'test', 'test', 'test@test.com');
 
-ALTER TABLE `accounts` ADD PRIMARY KEY (`id`);
-ALTER TABLE `accounts` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+ALTER TABLE `users` ADD PRIMARY KEY (`id`);
+ALTER TABLE `users` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 
 
 /***********************2*************************/

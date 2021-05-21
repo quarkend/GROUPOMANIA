@@ -4,10 +4,21 @@ const bodyParser = require('body-parser');
 /*importer le package http de node */
 const http = require('http');
 const mysql = require('mysql');
+const path = require('path');
+const helmet = require("helmet");
 // importer notre app QUI VA RECEVOIR LA REQ ET LA REPONSE
 const app = express()
 
+
+
+// Routes vers les éléments
+
+// const routesPosts = require('./routes/routesPosts');
+const routesUsers = require('./routes/routesUsers');
+
 app.use(bodyParser.json());
+// Utilisation de la route path pour reconnaître les requêtes images
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // Headers pour éviter les erreurs de CORS
 app.use((req, res, next) => {
@@ -17,7 +28,7 @@ app.use((req, res, next) => {
     next();
 });
 
-
+// Connection à la base de donnée
 
 const db = mysql.createConnection({
     host: 'localhost',
@@ -40,6 +51,11 @@ db.connect(function (err) {
     if (err) throw err;
     console.log("Connected!");
 });
+
+
+
+// app.use('/api/posts', routesPosts);
+app.use('/api/auth', routesUsers);
 // app.use(mysql());
 
 module.exports = app;
