@@ -1,124 +1,60 @@
-// require('dotenv').config();
-const http = require('http');
-const app = require('./app');
-// const mysql = require('mysql');
-// const app = express()
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
 
-const normalizePort = val => {
-    const port = parseInt(val, 10);
+const app = express();
 
-    if (isNaN(port)) {
-        return val;
-    }
-    if (port >= 0) {
-        return port;
-    }
-    return false;
-};
-const port = normalizePort(process.env.PORT || '3001');
-app.set('port', port);
-
-const errorHandler = error => {
-    if (error.syscall !== 'listen') {
-        throw error;
-    }
-    const address = server.address();
-    const bind = typeof address === 'string' ? 'pipe ' + address : 'port: ' + port;
-    switch (error.code) {
-        case 'EACCES':
-            console.error(bind + ' requires elevated privileges.');
-            process.exit(1);
-            break;
-        case 'EADDRINUSE':
-            console.error(bind + ' is already in use.');
-            process.exit(1);
-            break;
-        default:
-            throw error;
-    }
+var corsOptions = {
+    origin: "http://localhost:8081"
 };
 
-const server = http.createServer(app);
+app.use(cors(corsOptions));
 
-server.on('error', errorHandler);
-server.on('listening', () => {
-    const address = server.address();
-    const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
-    console.log('Listening on ' + bind);
+// parse requests of content-type - application/json
+app.use(bodyParser.json());
+
+// parse requests of content-type - application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// database
+const db = require("./models");
+const Role = db.role;
+
+db.sequelize.sync();
+// force: true will drop the table if it already exists
+db.sequelize.sync({ force: true }).then(() => {
+    console.log('Drop and Resync Database with { force: true }');
+    initial();
 });
 
-server.listen(port);
+// simple route
+app.get("/", (req, res) => {
+    res.json({ message: "Welcome w application." });
+});
 
+// routes
+require('./routes/auth.routes')(app);
+require('./routes/user.routes')(app);
 
+// set port, listen for requests
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}.`);
+});
 
-/*********************************** */
-// const express = require('express')
-// /*importer le package http de node */
-// const http = require('http');
-// // importer notre app QUI VA RECEVOIR LA REQ ET LA REPONSE
-// const app = express()
-// const mysql = require('mysql');
-// const db = mysql.createConnection({
-//     host: 'localhost',
-//     user: 'root',
-//     password: 'password',
-//     database: 'groupomania',
-// });
-// app.get('/register', (req, res) => {
-//     db.query(
-//         "INSERT INTO users (username, password) VALUES ('pall', 'password');",
-//         (err, results) => {
-//             console.log(err);
-//             res.send(results);
+function initial() {
+    Role.create({
+        id: 1,
+        name: "user"
+    });
 
-//         }
-//     );
-// });
+    Role.create({
+        id: 2,
+        name: "moderator"
+    });
 
-// db.connect(function (err) {
-//     if (err) throw err;
-//     console.log("Connected!");
-// });
-
-// /*choix du port avec amelioration*/
-// const normalizePort = val => {
-//     const port = parseInt(val, 10);
-//     if (isNaN(port)) {
-//         return val;
-//     }
-//     if (port >= 0) {
-//         return port;
-//     }
-//     return false;
-// };
-// const port = normalizePort(process.env.PORT || '3001');
-// app.set('port', port);
-// const errorHandler = error => {
-//     if (error.syscall !== 'listen') {
-//         throw error;
-//     }
-//     const address = server.address();
-//     const bind = typeof address === 'string' ? 'pipe ' + address : 'port: ' + port;
-//     switch (error.code) {
-//         case 'EACCES':
-//             console.error(bind + ' requires elevated privileges.');
-//             process.exit(1);
-//             break;
-//         case 'EADDRINUSE':
-//             console.error(bind + ' is already in use.');
-//             process.exit(1);
-//             break;
-//         default:
-//             throw error;
-//     }
-// };
-// /* creation de la fonction qui sera appler a chaque requette recus par le server elle  2 arguments req et res*/
-// const server = http.createServer(app);
-// server.on('error', errorHandler);
-// server.on('listening', () => {
-//     const address = server.address();
-//     const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
-//     console.log('Listening on ' + bind);
-// });
-// /* la il doit ecouter les requettes envoyer  */
-// server.listen(port);
+    Role.create({
+        id: 3,
+        name: "admin"
+    });
+}

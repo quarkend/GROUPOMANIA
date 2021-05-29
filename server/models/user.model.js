@@ -63,9 +63,10 @@
 //     return Users;
 // };
 // module.exports = UserModels;
+/***************************************2 */
 const mysql = require('mysql')
 
-class UserModels {
+class users {
     constructor() { }
     signup(sqlInserts) {
         let sql = 'INSERT INTO users VALUES(NULL, ?, ?, ?, ?, NULL)';
@@ -85,4 +86,20 @@ class UserModels {
     }
 }
 
-module.exports = UserModels;
+module.exports = users;
+/******************************************3 */
+module.exports = (sequelize, Sequelize) => {
+    const User = sequelize.define("users", {
+        username: {
+            type: Sequelize.STRING
+        },
+        email: {
+            type: Sequelize.STRING
+        },
+        password: {
+            type: Sequelize.STRING
+        }
+    });
+
+    return User;
+};

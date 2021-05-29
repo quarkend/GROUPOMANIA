@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const User = require('../models/UserModels');
+const User = require('../models/user.model');
 
 
 exports.signup = (req, res, next) => {
@@ -41,13 +41,13 @@ exports.login = (req, res, next) => {
         })
         .catch(error => res.status(500).json({ error }));
 };
-// export default function authHeader() {
-//     const user = JSON.parse(localStorage.getItem('user'));
+export default function authHeader() {
+    const user = JSON.parse(localStorage.getItem('user'));
 
-//     if (user && user.accessToken) {
-//         // for Node.js Express back-end
-//         return { 'x-access-token': user.accessToken };
-//     } else {
-//         return {};
-//     }
-// }
+    if (user && user.accessToken) {
+        // for Node.js Express back-end
+        return { 'x-access-token': user.accessToken };
+    } else {
+        return {};
+    }
+}
