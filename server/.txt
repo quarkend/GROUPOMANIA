@@ -1,0 +1,3 @@
+mysql -h localhost -u root -p
+
+SELECT table_schema "Databases", sum( data_length + index_length) / 1024 / 1024 "Size of DB in MB" FROM information_schema.TABLES GROUP BY table_schema;
