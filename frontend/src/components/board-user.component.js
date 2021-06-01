@@ -1,43 +1,30 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
+//import axios from 'axios';
 
-import UserService from "../services/user.service";
 
-export default class BoardUser extends Component {
-    constructor(props) {
-        super(props);
 
-        this.state = {
-            content: ""
-        };
+
+class Users extends Component {
+
+    state = {
     }
-
-    componentDidMount() {
-        UserService.getUserBoard().then(
-            response => {
-                this.setState({
-                    content: response.data
-                });
-            },
-            error => {
-                this.setState({
-                    content:
-                        (error.response &&
-                            error.response.data &&
-                            error.response.data.message) ||
-                        error.message ||
-                        error.toString()
-                });
-            }
-        );
-    }
-
     render() {
+
+        const tokenId = JSON.parse(localStorage.getItem(('userTokenLog')))
+        if (tokenId === null) {
+            window.location = "/login"
+        }
         return (
-            <div className="container">
-                <header className="jumbotron">
-                    <h3>{this.state.content}</h3>
-                </header>
+            <div className="User">
+                <h1>Profil</h1>
+
+
             </div>
         );
     }
+
 }
+
+
+export default Users;
+

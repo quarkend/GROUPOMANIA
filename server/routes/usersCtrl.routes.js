@@ -11,16 +11,16 @@ const PASSWORD_REGEX = /^(?=.*\d).{4,8}$/;
 module.exports = {
     register: function (req, res) {
         //Params
-        const phone = req.body.phone;
+        // const phone = req.body.phone;
         const username = req.body.username;
         const password = req.body.password;
 
-        if (phone == null || username == null || password == null) {
-            return res.status(400).json({ 'error': 'missing parameters' });
-        }
-        if (phone.length != 10) {
-            return res.status(400).json({ 'error': 'Veuillez rentrer un numéro de téléphone (ex:0612345678)' });
-        }
+        // if (phone == null || username == null || password == null) {
+        //     return res.status(400).json({ 'error': 'missing parameters' });
+        // }
+        // if (phone.length != 10) {
+        //     return res.status(400).json({ 'error': 'Veuillez rentrer un numéro de téléphone (ex:0612345678)' });
+        // }
         if (!PASSWORD_REGEX.test(password)) {
             return res.status(400).json({ 'error': 'Mot de passe non-valide (Une taille de 4 à 8 caractèrs et doit inclure un chiffre minimum - Caractères spéciaux non-valides -' });
         }
@@ -28,8 +28,8 @@ module.exports = {
         asyncLib.waterfall([
             function (done) {
                 models.User.findOne({
-                    attributes: ['phone'],
-                    where: { phone: phone }
+                    attributes: ['username'],
+                    where: { username: username }
                 })
                     .then(function (userFound) {
                         done(null, userFound);
@@ -49,7 +49,7 @@ module.exports = {
             },
             function (userFound, bcryptedPassword, done) {
                 const newUser = models.User.create({
-                    phone: phone,
+                    // phone: phone,
                     username: username,
                     password: bcryptedPassword,
                     isAdmin: 0
@@ -74,17 +74,17 @@ module.exports = {
     login: function (req, res) {
 
         // Params
-        const phone = req.body.phone;
+        const username = req.body.username;
         const password = req.body.password;
 
-        if (phone == null || password == null) {
+        if (username == null || password == null) {
             return res.status(400).json({ 'error': 'Elément(s) manquant(s)' });
         }
 
         asyncLib.waterfall([
             function (done) {
                 models.User.findOne({
-                    where: { phone: phone }
+                    where: { username: username }
                 })
                     .then(function (userFound) {
                         done(null, userFound);
@@ -130,7 +130,7 @@ module.exports = {
             return res.status(400).json({ 'error': 'Mauvais token' });
 
         models.User.findOne({
-            attributes: ['id', 'phone', 'username', 'isAdmin'],
+            attributes: ['id', 'username', 'isAdmin'],
             where: { id: userId }
         }).then(function (user) {
             if (user) {
@@ -152,7 +152,7 @@ module.exports = {
 
 
         models.User.destroy({
-            attributes: ['id', 'phone', 'username'],
+            attributes: ['id', 'username'],
             where: { id: userId }
         }).then(function (user) {
             if (user) {
