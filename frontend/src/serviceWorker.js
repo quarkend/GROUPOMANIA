@@ -8,6 +8,7 @@
 // resources are updated in the background.
 
 // To learn more about the benefits of this model and instructions on how to
+// opt-in, read https://bit.ly/CRA-PWA
 
 const isLocalhost = Boolean(
     window.location.hostname === 'localhost' ||
@@ -41,7 +42,8 @@ export function register(config) {
                 // service worker/PWA documentation.
                 navigator.serviceWorker.ready.then(() => {
                     console.log(
-                        'This web app is being served cache-first by a service '
+                        'This web app is being served cache-first by a service ' +
+                        'worker. To learn more, visit https://bit.ly/CRA-PWA'
                     );
                 });
             } else {
@@ -68,7 +70,8 @@ function registerValidSW(swUrl, config) {
                             // but the previous service worker will still serve the older
                             // content until all client tabs are closed.
                             console.log(
-                                'New content is available and will be used when all '
+                                'New content is available and will be used when all ' +
+                                'tabs for this page are closed. See https://bit.ly/CRA-PWA.'
                             );
 
                             // Execute callback
@@ -98,9 +101,7 @@ function registerValidSW(swUrl, config) {
 function checkValidServiceWorker(swUrl, config) {
     // Check if the service worker can be found. If it can't reload the page.
     fetch(swUrl, {
-        headers: {
-            'Service-Worker': 'script'
-        },
+        headers: { 'Service-Worker': 'script' }
     })
         .then(response => {
             // Ensure service worker exists, and that we really are getting a JS file.

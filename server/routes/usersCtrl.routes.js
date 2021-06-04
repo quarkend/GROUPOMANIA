@@ -1,7 +1,7 @@
 // Imports
 const bcrypt = require('bcrypt');
 const jwtUtils = require('../utils/jwt.utils.js');
-const models = require('../models');
+const models = require('../sequelize-associations/models');
 const asyncLib = require('async');
 
 // Constants
@@ -11,16 +11,16 @@ const PASSWORD_REGEX = /^(?=.*\d).{4,8}$/;
 module.exports = {
     register: function (req, res) {
         //Params
-        // const phone = req.body.phone;
+        const phone = req.body.phone;
         const username = req.body.username;
         const password = req.body.password;
 
-        // if (phone == null || username == null || password == null) {
-        //     return res.status(400).json({ 'error': 'missing parameters' });
-        // }
-        // if (phone.length != 10) {
-        //     return res.status(400).json({ 'error': 'Veuillez rentrer un numéro de téléphone (ex:0612345678)' });
-        // }
+        if (phone == null || username == null || password == null) {
+            return res.status(400).json({ 'error': 'missing parameters' });
+        }
+        if (phone.length != 10) {
+            return res.status(400).json({ 'error': 'Veuillez rentrer un numéro de téléphone (ex:0612345678)' });
+        }
         if (!PASSWORD_REGEX.test(password)) {
             return res.status(400).json({ 'error': 'Mot de passe non-valide (Une taille de 4 à 8 caractèrs et doit inclure un chiffre minimum - Caractères spéciaux non-valides -' });
         }
@@ -28,8 +28,8 @@ module.exports = {
         asyncLib.waterfall([
             function (done) {
                 models.User.findOne({
-                    attributes: ['username'],
-                    where: { username: username }
+                    attributes: ['phone'],
+                    where: { phone: phone }
                 })
                     .then(function (userFound) {
                         done(null, userFound);
@@ -49,7 +49,7 @@ module.exports = {
             },
             function (userFound, bcryptedPassword, done) {
                 const newUser = models.User.create({
-                    // phone: phone,
+                    phone: phone,
                     username: username,
                     password: bcryptedPassword,
                     isAdmin: 0
@@ -74,17 +74,17 @@ module.exports = {
     login: function (req, res) {
 
         // Params
-        const username = req.body.username;
+        const phone = req.body.phone;
         const password = req.body.password;
 
-        if (username == null || password == null) {
+        if (phone == null || password == null) {
             return res.status(400).json({ 'error': 'Elément(s) manquant(s)' });
         }
 
         asyncLib.waterfall([
             function (done) {
                 models.User.findOne({
-                    where: { username: username }
+                    where: { phone: phone }
                 })
                     .then(function (userFound) {
                         done(null, userFound);
@@ -130,7 +130,7 @@ module.exports = {
             return res.status(400).json({ 'error': 'Mauvais token' });
 
         models.User.findOne({
-            attributes: ['id', 'username', 'isAdmin'],
+            attributes: ['id', 'phone', 'username', 'isAdmin'],
             where: { id: userId }
         }).then(function (user) {
             if (user) {
@@ -152,7 +152,7 @@ module.exports = {
 
 
         models.User.destroy({
-            attributes: ['id', 'username'],
+            attributes: ['id', 'phone', 'username'],
             where: { id: userId }
         }).then(function (user) {
             if (user) {
@@ -166,42 +166,3 @@ module.exports = {
     }
 }
 
-
-// const { authJwt } = require("../middleware");
-// const controller = require("../controllers/user.controller");
-// // const controller = require("../controllers/posts.controller");
-
-// module.exports = function (app) {
-//     app.use(function (req, res, next) {
-//         res.header(
-//             "Access-Control-Allow-Headers",
-//             "x-access-token, Origin, Content-Type, Accept"
-//         );
-//         next();
-//     });
-
-//     app.get("/api/all", controller.allAccess);
-
-//     app.get(
-//         "/api//user",
-//         [authJwt.verifyToken],
-//         controller.userBoard
-//     );
-
-//     app.get(
-//         "/api/mod",
-//         [authJwt.verifyToken, authJwt.isModerator],
-//         controller.moderatorBoard
-//     );
-
-//     app.get(
-//         "/api/admin",
-//         [authJwt.verifyToken, authJwt.isAdmin],
-//         controller.adminBoard
-//     );
-//     // app.get(
-//     //     "/api/posts",
-//     //     [authJwt.verifyToken, authJwt.isAdmin],
-//     //     controller.postsBoard
-//     // );
-// };

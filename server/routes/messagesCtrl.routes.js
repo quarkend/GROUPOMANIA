@@ -1,5 +1,5 @@
 // imports
-const models = require('../models');
+const models = require('../sequelize-associations/models');
 const asyncLib = require('async');
 const jwtUtils = require('../utils/jwt.utils')
 
