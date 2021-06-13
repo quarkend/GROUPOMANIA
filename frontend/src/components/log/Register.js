@@ -1,87 +1,58 @@
-import React, { Component } from 'react';
-import axios from 'axios';
-// import '../style/Register.css';
-const API_REG = 'http://localhost:8080/api/users/register';
+import { useState } from 'react';
+import { Redirect } from 'react-router-dom';
+import { API_AUTH_SIGNUP } from '../../constants/api'
+import PropTypes from 'prop-types';
+import styles from './Log.module.css';
 
-class Register extends Component {
+const Register = () => {
+	const [firstname, setFirstname] = useState('');
+	const [lastname, setLastname] = useState('');
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+	const [redirect, setRedirect] = useState(false);
 
+	const submit = async (e) => {
+		e.preventDefault();
 
-    constructor(props) {
-        super(props)
+		await fetch(API_AUTH_SIGNUP, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+					firstname,
+				 	lastname,
+               email,
+               password
+            })
+        });
 
-        this.onChangePhone = this.onChangePhone.bind(this);
-        this.onChangeUsername = this.onChangeUsername.bind(this);
-        this.onChangePassword = this.onChangePassword.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
+		  setRedirect(true);
 
-        this.state = {
-            phone: '',
-            username: '',
-            password: ''
-        }
-    }
+	};
 
-    onChangePhone(e) {
-        this.setState({ phone: e.target.value })
-    }
+	if (redirect) {
+		return <Redirect to="/login"/>;
+	}
 
-    onChangeUsername(e) {
-        this.setState({ username: e.target.value })
-    }
-
-    onChangePassword(e) {
-        this.setState({ password: e.target.value })
-    }
-
-    onSubmit(e) {
-        e.preventDefault()
-
-        const userObject = {
-            phone: this.state.phone,
-            username: this.state.username,
-            password: this.state.password
-        };
-
-        axios.post(API_REG, userObject)
-            .then((res) => {
-                console.log(res.data)
-            }).catch((error) => {
-                console.log(error)
-            });
-
-        this.setState({ phone: '', username: '', password: '' })
-        window.location = "/login";
-    }
-
-    render() {
-
-        return (
-            <div className="col-md-12">
-                <div className="card card-container">
-                    <img
-                        src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-                        alt="profile-img"
-                        className="profile-img-card"
-                    />
-                    <div className="register">
-                        <h1>Inscription</h1>
-                        <form onSubmit={this.onSubmit}>
-                            <div className="inputRegister">
-                                <label htmlFor="identifiant">biss one</label>
-                                <br /><input type='text' id="identifiant" placeholder="Ex: 0610203040" value={this.state.phone} onChange={this.onChangePhone} />
-                                <br /><label htmlFor="username">Pseudo</label>
-                                <br /><input id="username" value={this.state.username} onChange={this.onChangeUsername} />
-                                <br /><label htmlFor="mdp">Mot de passe</label>
-                                <br /><input type="password" id="mdp" placeholder="4-8 Caract. + 1 chiffre Min." value={this.state.password} onChange={this.onChangePassword} />
-                                <br /><button type="submit" className='inscription' value="register">Inscription</button>
-                            </div>
-                        </form>
-                    </div></div></div>
-
-        );
-    }
-
+	return (
+		<div className= "form-signin">
+			<form onSubmit = {submit}>
+				<h1 className="h3 mb-3 fw-normal">S'inscrire</h1>
+				<input type="lastname" className="form-control" placeholder="Nom" required 
+					onChange = {e => setLastname(e.target.value)} />
+				<input type="firstname" className="form-control" placeholder="Prénom" required 
+					onChange = {e => setFirstname(e.target.value)} />
+				<input type="email" className="form-control" placeholder="Adresse mail" required 
+					onChange = {e => setEmail(e.target.value)}/>
+				<input type="password" className="form-control" placeholder="Mot de passe" required 
+					onChange = {e => setPassword(e.target.value)} />
+				<button className="w-100 btn btn-lg btn-primary" type="submit">S'inscrire</button>
+			</form>
+		</div>
+	)
 }
 
+Register.propTypes = {
+	text: PropTypes.string
+}
 
 export default Register;

@@ -1,87 +1,92 @@
-import React, { Component } from 'react';
-import axios from 'axios';
-// import '../style/Login.css';
-const API_LOG = 'http://localhost:8080/api/users/login';
+import { useState, useEffect } from 'react';
+import { Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
+import { withErrorApi } from '../../hoc-helpers/withErrorApi';
+import { postApiObjet } from '../../utils/network'
+import { API_AUTH_LOGIN } from '../../constants/api'
 
-class Login extends Component {
+import styles from './Log.module.css';
 
-    constructor(props) {
-        super(props)
+const LogIn = ({ firstname, setFirstname, setLastname }) => {
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+	const [redirect, setRedirect] = useState(false);
+	
+	const handleLogIn = async (e)  => {
+		e.preventDefault();
+		// сделать запрос, проверить ответ
+		const res = await fetch(API_AUTH_LOGIN, {
+			method: 'POST',
+			headers: {'Content-Type': 'application/json'},
+			credentials: 'include',
+			body: JSON.stringify({
+				email,
+				password
+			})
+	  });
+	  const content = await res.json();
+	  
+	  console.log('content: ', JSON.stringify(content));
+	  setRedirect(true);	  
+	  setFirstname(content.firstName);
+	  setLastname(content.lastName);
+	  
 
-        this.onChangePhone = this.onChangePhone.bind(this);
-        this.onChangePassword = this.onChangePassword.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
+	/*
+		let body = { 
+			email: email,
+			password: password,
+		};
+		const res = await postApiObjet(API_AUTH_LOGIN, body);
+		if (res) {
+			if (!res.error) {
+				setToken(res.token);
+			//	console.log(res.cookie);
+				alert(res.token);
+				// открыть страницу
+				window.location = '/forum';
+			} else {
+				// обнулить поля ввода и вывести ошибку пользователю
+				alert('!!!');
+			};
+			setErrorApi(false);
+		} else {
+			setErrorApi(true);
+		};
+		*/
+	};
+	/*
+	useEffect(() => {
+		console.log('redirect: ', redirect);
+		
+	}, [redirect]);
+	*/
+	if (redirect) {
+			
+		return <Redirect to="/"/>;
+	}
 
-        this.state = {
-            phone: '',
-            password: ''
-        }
-    }
-
-    onChangePhone(e) {
-        this.setState({ phone: e.target.value })
-    }
-
-    onChangePassword(e) {
-        this.setState({ password: e.target.value })
-    }
-
-    onSubmit(e) {
-        e.preventDefault()
-
-        const userObject = {
-            phone: this.state.phone,
-            password: this.state.password
-        };
-
-        axios.post(API_LOG, userObject)
-            .then((res) => {
-                localStorage.setItem('userTokenLog', JSON.stringify(res.data));
-                window.location = "/mywall";
-            }).catch(() => {
-                (window.alert("Identifiant/Mot de passe Incorrect"))
-            });
-
-        this.setState({ phone: '', password: '' })
-    }
-
-
-
-    render() {
-
-        return (
-            <div className="col-md-12">
-                <div className="card card-container">
-                    <img
-                        src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-                        alt="profile-img"
-                        className="profile-img-card"
-                    />
-                    <div className="login">
-                        <h1>Connexion au compte</h1>
-                        <form onSubmit={this.onSubmit}>
-                            <div className="inputLogin">
-                                <label htmlFor="identifiant">Identifiant</label>
-                                <br /><input id="identifiant" value={this.state.phone} onChange={this.onChangePhone} />
-                                <br /><label htmlFor="mdp">Mot de passe</label>
-                                <br /><input id="mdp" type='password' value={this.state.password} onChange={this.onChangePassword} />
-                                <br /><button className="validerLogin">Valider</button>
-                            </div>
-                        </form>
-                        <div>
-                            <p>Pour créer un profil, cliquez <span><a href="/register">ICI</a></span></p>
-                            <p>Pour obtenir le token Admin cliquez <span><a href="/admin">ICI</a></span></p>
-                        </div>
-
-                    </div>
-                </div>
-
-            </div>
-        );
-    }
-
+	return (
+		<>
+			<div className= "form-signin">
+				<form onSubmit = {handleLogIn}>
+					<h1 className="h3 mb-3 fw-normal">Connectez-vous</h1>
+					<input type="email" className="form-control" placeholder="Adresse mail" required
+						onChange = {e => setEmail(e.target.value)} />
+					<input type="password" className="form-control" placeholder="Mot de passe" required
+						onChange = {e => setPassword(e.target.value)} />
+					<button className="w-100 btn btn-lg btn-primary" type="submit">Se connecter</button>
+				</form>
+			</div>
+		</>
+	)
 }
 
+LogIn.propTypes = {
+	setErrorApi: PropTypes.func,
+//	setFirstname: PropTypes.func, 
+//	setLastname :PropTypes.func
+}
 
-export default Login;
+export default LogIn;
