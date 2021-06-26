@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { API_AUTH_LOGOUT } from '../../constants/api'
+import React from 'react'
+
 
 
 const Header = ({ firstname, setFirstname, setLastname }) => {

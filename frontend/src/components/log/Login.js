@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
-
+import React from 'react'
 import { postApiObjet } from '../../utils/network'
 import { API_AUTH_LOGIN } from '../../constants/api'
 
 
-const Login = ({ firstname, setFirstname, setLastname }) => {
+const Login = ({ firstname, lastname, setFirstname, setLastname }) => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [redirect, setRedirect] = useState(false);
@@ -39,18 +39,18 @@ const Login = ({ firstname, setFirstname, setLastname }) => {
 	}
 
 	return (
-		<>
-			<div className="form-signin">
-				<form onSubmit={handleLogIn}>
-					<h1 className="h3 mb-3 fw-normal">Connectez-vous</h1>
-					<input type="email" className="form-control" placeholder="Adresse mail" required
-						onChange={e => setEmail(e.target.value)} />
-					<input type="password" className="form-control" placeholder="Mot de passe" required
-						onChange={e => setPassword(e.target.value)} />
-					<button className="w-100 btn btn-lg btn-primary" type="submit">Se connecter</button>
-				</form>
-			</div>
-		</>
+
+		<div className="form-signin">
+			<form onSubmit={handleLogIn}>
+				<h1 className="h3 mb-3 fw-normal">Connectez-vous</h1>
+				<input type="email" className="form-control" placeholder="Adresse mail" required
+					onChange={e => setEmail(e.target.value)} />
+				<input type="password" className="form-control" placeholder="Mot de passe" required
+					onChange={e => setPassword(e.target.value)} />
+				<button className="w-100 btn btn-lg btn-primary" type="submit">Se connecter</button>
+			</form>
+		</div>
+
 	)
 }
 
