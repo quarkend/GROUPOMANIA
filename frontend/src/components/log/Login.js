@@ -2,80 +2,51 @@ import { useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import { withErrorApi } from '../../hoc-helpers/withErrorApi';
 import { postApiObjet } from '../../utils/network'
 import { API_AUTH_LOGIN } from '../../constants/api'
 
-import styles from './Log.module.css';
 
-const LogIn = ({ firstname, setFirstname, setLastname }) => {
+const Login = ({ firstname, setFirstname, setLastname }) => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [redirect, setRedirect] = useState(false);
-	
-	const handleLogIn = async (e)  => {
+
+	const handleLogIn = async (e) => {
 		e.preventDefault();
-		// сделать запрос, проверить ответ
+
 		const res = await fetch(API_AUTH_LOGIN, {
 			method: 'POST',
-			headers: {'Content-Type': 'application/json'},
+			headers: { 'Content-Type': 'application/json' },
 			credentials: 'include',
 			body: JSON.stringify({
 				email,
 				password
 			})
-	  });
-	  const content = await res.json();
-	  
-	  console.log('content: ', JSON.stringify(content));
-	  setRedirect(true);	  
-	  setFirstname(content.firstName);
-	  setLastname(content.lastName);
-	  
+		});
+		let content;
 
-	/*
-		let body = { 
-			email: email,
-			password: password,
-		};
-		const res = await postApiObjet(API_AUTH_LOGIN, body);
-		if (res) {
-			if (!res.error) {
-				setToken(res.token);
-			//	console.log(res.cookie);
-				alert(res.token);
-				// открыть страницу
-				window.location = '/forum';
-			} else {
-				// обнулить поля ввода и вывести ошибку пользователю
-				alert('!!!');
-			};
-			setErrorApi(false);
-		} else {
-			setErrorApi(true);
-		};
-		*/
+		content = await res.json();
+
+		console.log('content: ', JSON.stringify(content));
+		setRedirect(true);
+		setFirstname(content.firstName);
+		setLastname(content.lastName)
 	};
-	/*
-	useEffect(() => {
-		console.log('redirect: ', redirect);
-		
-	}, [redirect]);
-	*/
+
 	if (redirect) {
-			
-		return <Redirect to="/"/>;
+
+		return <Redirect to="/" />;
 	}
 
 	return (
 		<>
-			<div className= "form-signin">
-				<form onSubmit = {handleLogIn}>
+			<div className="form-signin">
+				<form onSubmit={handleLogIn}>
 					<h1 className="h3 mb-3 fw-normal">Connectez-vous</h1>
 					<input type="email" className="form-control" placeholder="Adresse mail" required
-						onChange = {e => setEmail(e.target.value)} />
+						onChange={e => setEmail(e.target.value)} />
 					<input type="password" className="form-control" placeholder="Mot de passe" required
-						onChange = {e => setPassword(e.target.value)} />
+						onChange={e => setPassword(e.target.value)} />
 					<button className="w-100 btn btn-lg btn-primary" type="submit">Se connecter</button>
 				</form>
 			</div>
@@ -83,10 +54,9 @@ const LogIn = ({ firstname, setFirstname, setLastname }) => {
 	)
 }
 
-LogIn.propTypes = {
+Login.propTypes = {
 	setErrorApi: PropTypes.func,
-//	setFirstname: PropTypes.func, 
-//	setLastname :PropTypes.func
+
 }
 
-export default LogIn;
+export default Login;

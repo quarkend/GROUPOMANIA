@@ -12,7 +12,7 @@ export const getApiResource = async (url) => {
 			return false;
 		};
 		return await res.json();
-	} catch(error) {
+	} catch (error) {
 		console.error('Could not fetch. ', error.message);
 		return false;
 	}
@@ -25,7 +25,7 @@ export const postApiObjet = async (url, body) => {
 		const res = await fetch(url, {
 			method: "POST",
 			headers: {
-			"Content-Type": "application/json"
+				"Content-Type": "application/json"
 			},
 			credentials: 'include',
 			body: JSON.stringify(body)
@@ -36,7 +36,7 @@ export const postApiObjet = async (url, body) => {
 			return false;
 		};
 		return await res.json();
-	} catch(error) {
+	} catch (error) {
 		console.error('Could not fetch. ', error.message);
 		return false;
 	}
